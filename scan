@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cndScanName="pbc_cand_scanner"
+cmteScanName="pbc_cmte_scanner"
+scannerNames=($cndScanName $cmteScanName)
+
+formattedDate=`date +%Y-%m-%d-%H%M%S`
+outputDir="Output/$formattedDate/"
+mkdir -p $outputDir
+
+for scannerName in ${scannerNames[@]}; do
+	scanner="$scannerName.rb"
+	echo "Launching $scanner"
+	nohup ruby $scanner "$outputDir/$scannerName-contrib.txt" "$outputDir/$scannerName-exp.txt" > "$outputDir/$scannerName.log" 2>&1 &
+done
