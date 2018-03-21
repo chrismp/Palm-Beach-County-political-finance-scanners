@@ -191,3 +191,5 @@ page.css("#form1 td a").each{|a|
 	} # DONE: cand_page.css('#CFCandidateElections tr')[1..-1].each
 	p '===='
 } # DONE: page.css("#form1 td a").each
+
+puts "DONE"

@@ -159,3 +159,5 @@ cmte_list_pg.css('ul')[-1].css('li a').each{|a|
 		}
 	}
 }
+
+puts "DONE"
