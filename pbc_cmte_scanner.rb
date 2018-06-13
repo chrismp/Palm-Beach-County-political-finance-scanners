@@ -13,7 +13,6 @@ File.open(contribFile,'w'){|f|
 		"Committee ID",
 		"Committee",
 		"Contribution date unformatted",
-		"Contribution date formatted",
 		"Contributor",
 		"Contributor address",
 		"Contributor city",
@@ -32,7 +31,6 @@ File.open(expFile,'w'){|f|
 		"Committee ID",
 		"Committee",
 		"Expense date unformatted",
-		"Expense date formatted",
 		"Expense name",
 		"Expense address",
 		"Expense city",
@@ -66,7 +64,7 @@ cmte_list_pg.css('ul')[-1].css('li a').each{|a|
 				contrib_td = contrib_tr.css('td')
 				contrib_date_str = contrib_td[0].text # DATAPOINT!!
 
-				contrib_date = Date.parse(contrib_date_str).to_s # DATAPOINT!! SQL-formatted date
+				# contrib_date = Date.parse(contrib_date_str).to_s # DATAPOINT!! SQL-formatted date
 				contributor_arr = contrib_td[1].to_s
 					.gsub(/\<.*td.*\>|\t/,"")
 					.gsub(/\n/," ")
@@ -91,7 +89,6 @@ cmte_list_pg.css('ul')[-1].css('li a').each{|a|
 					cmte_id,
 					cmte_name,
 					contrib_date_str,
-					contrib_date,
 					contrib_name,
 					contrib_address,
 					contrib_city,
@@ -113,7 +110,7 @@ cmte_list_pg.css('ul')[-1].css('li a').each{|a|
 				exp_td = exp_tr.css('td')
 				exp_date_str = exp_td[0].text # DATAPOINT!!
 
-				exp_date = Date.parse(exp_date_str).to_s # DATAPOINT!!
+				# exp_date = Date.parse(exp_date_str).to_s # DATAPOINT!!
 
 				entity_arr = exp_td[1].to_s
 					.gsub(/\<.*td.*\>|\t/,"")
@@ -141,7 +138,6 @@ cmte_list_pg.css('ul')[-1].css('li a').each{|a|
 					cmte_id,
 					cmte_name,
 					exp_date_str,
-					exp_date,
 					exp_name,
 					exp_address,
 					exp_city,

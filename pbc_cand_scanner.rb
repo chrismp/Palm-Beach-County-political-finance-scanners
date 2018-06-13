@@ -15,10 +15,8 @@ File.open(contribFile,'w'){|f|
 		"Election ID",
 		"Election name",
 		"Election date unformatted",
-		"Election date formatted",
 		"Office",
 		"Contribution date unformatted",
-		"Contribution date formatted",
 		"Contributor",
 		"Contributor address",
 		"Contributor city",
@@ -39,10 +37,8 @@ File.open(expFile,'w'){|f|
 		"Election ID",
 		"Election name",
 		"Election date unformatted",
-		"Election date formatted",
 		"Office",
 		"Expense date unformatted",
-		"Expense date formatted",
 		"Expense name",
 		"Expense address",
 		"Expense city",
@@ -70,8 +66,6 @@ page.css("#form1 td a").each{|a|
 	cand_page.css('#CFCandidateElections tr')[1..-1].each{|tr|
 		td = tr.css('td')
 		elex_id = td[1].css('a')[0]['href'].match(/elect_id\=.*?(?=\&)/).to_s.gsub('elect_id=','') # DATAPOINT!!
-		elex_date_str = td[0].text # DATAPOINT!!
-		elex_date = Date.parse(elex_date_str).to_s # DATAPOINT!!
 		elex_name = td[1].text # DATAPOINT!!
 		elex_ofc = td[2].text # DATAPOINT!!
 
@@ -89,7 +83,7 @@ page.css("#form1 td a").each{|a|
 				contrib_td = contrib_tr.css('td')
 				contrib_date_str = contrib_td[0].text # DATAPOINT!!
 
-				contrib_date = Date.parse(contrib_date_str).to_s # DATAPOINT!! SQL-formatted date
+				# contrib_date = Date.parse(contrib_date_str).to_s # DATAPOINT!! SQL-formatted date
 				contributor_arr = contrib_td[1].to_s
 					.gsub(/\<.*td.*\>|\t/,"")
 					.gsub(/\n/," ")
@@ -116,7 +110,6 @@ page.css("#form1 td a").each{|a|
 					elex_id,
 					elex_name,
 					elex_date_str,
-					elex_date,
 					elex_ofc,
 					contrib_date_str,
 					contrib_date,
@@ -140,8 +133,6 @@ page.css("#form1 td a").each{|a|
 			exp_page.css("#pnlExpenditures tr")[1..-1].each{|exp_tr|
 				exp_td = exp_tr.css('td')
 				exp_date_str = exp_td[0].text # DATAPOINT!!
-
-				exp_date = Date.parse(exp_date_str).to_s # DATAPOINT!!
 
 				entity_arr = exp_td[1].to_s
 					.gsub(/\<.*td.*\>|\t/,"")
@@ -169,10 +160,8 @@ page.css("#form1 td a").each{|a|
 					elex_id,
 					elex_name,
 					elex_date_str,
-					elex_date,
 					elex_ofc,
 					exp_date_str,
-					exp_date,
 					exp_name,
 					exp_address,
 					exp_city,
