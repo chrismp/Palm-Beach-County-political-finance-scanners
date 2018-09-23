@@ -55,6 +55,7 @@ File.open(expFile,'w'){|f|
 base_url = 'http://www.pbcelections.org/'
 cand_list_url = 'CFCandidates.aspx'
 
+puts "OPENING "+base_url+cand_list_url
 page = Nokogiri::HTML(open(base_url+cand_list_url))
 page.css("#form1 td a").each{|a| 
 	cand_url = base_url+a['href']
@@ -62,6 +63,7 @@ page.css("#form1 td a").each{|a|
 	cand_id = cand_url.split('=')[-1] # DATAPOINT!!
 	cand_name = a.text # DATAPOINT!!
 
+	puts "OPENING "+cand_url
 	cand_page = Nokogiri::HTML(open(cand_url))
 	cand_page.css('#CFCandidateElections tr')[1..-1].each{|tr|
 		td = tr.css('td')
@@ -70,6 +72,8 @@ page.css("#form1 td a").each{|a|
 		elex_ofc = td[2].text # DATAPOINT!!
 
 		fin_report_summary_url = base_url+td[1].css('a')[0]['href']
+
+		puts "OPENING "+fin_report_summary_url
 		fin_report_summary_page = Nokogiri::HTML(open(fin_report_summary_url))
 		fin_report_summary_page.css("#ReportsList a").each{|fin_detail_a| 
 			fin_detail_url = base_url+fin_detail_a['href']
@@ -78,6 +82,7 @@ page.css("#form1 td a").each{|a|
 			contrib_url = base_url+'/CFFilingDetail.aspx?type=contribution&file_id='+file_id
 			exp_url = base_url+'/CFFilingDetail.aspx?type=expenditure&file_id='+file_id
 
+			puts "OPENING "+contrib_url
 			contrib_page = Nokogiri::HTML(open(contrib_url))
 			contrib_page.css('#pnlContributions tr')[1..-1].each{|contrib_tr|
 				contrib_td = contrib_tr.css('td')
@@ -91,28 +96,35 @@ page.css("#form1 td a").each{|a|
 					.map{|item| 
 						item.strip.gsub(/\<.*?\>/,"")
 					}
-				city_state_zip_arr = contributor_arr[2].split(',')
 
-				contrib_name = contributor_arr[0] # DATAPOINT!!
-				contrib_address = contributor_arr[1] # DATAPOINT!!
-				contrib_city = city_state_zip_arr[0] # DATAPOINT!!
-				contrib_state = city_state_zip_arr[1].strip[0..1] # DATAPOINT!!
-				contrib_zip = city_state_zip_arr[1][-5..-1] # DATAPOINT!!
-				contrib_title = contributor_arr.length===4 ? contributor_arr[3] : nil # DATAPOINT!!
+				begin
+					city_state_zip_arr = contributor_arr[2].split(',')
 
-				contributor_type = contrib_td[2].text # DATAPOINT!!
-				contribution_type = contrib_td[3].text # DATAPOINT!!
-				contrib_amt = contrib_td[4].text.gsub('$','').to_f # DATAPOINT!!
+					contrib_name = contributor_arr[0] # DATAPOINT!!
+					contrib_address = contributor_arr[1] # DATAPOINT!!
+					contrib_city = city_state_zip_arr[0] # DATAPOINT!!
+					contrib_state = city_state_zip_arr[1].strip[0..1] # DATAPOINT!!
+					contrib_zip = city_state_zip_arr[1][-5..-1] # DATAPOINT!!
+					contrib_title = contributor_arr.length===4 ? contributor_arr[3] : nil # DATAPOINT!!
+
+					contributor_type = contrib_td[2].text # DATAPOINT!!
+					contribution_type = contrib_td[3].text # DATAPOINT!!
+					contrib_amt = contrib_td[4].text.gsub('$','').to_f # DATAPOINT!!
+				rescue Exception => e
+					puts contrib_url+" GIVING US PROBLEMS"
+					puts e,e.backtrace
+				end
+
 
 				rowData = [
 					cand_id,
 					cand_name,
 					elex_id,
 					elex_name,
-					elex_date_str,
+					# elex_date_str,
 					elex_ofc,
 					contrib_date_str,
-					contrib_date,
+					# contrib_date,
 					contrib_name,
 					contrib_address,
 					contrib_city,
@@ -123,7 +135,7 @@ page.css("#form1 td a").each{|a|
 					contribution_type,
 					contrib_amt
 				]
-				p rowData
+				# p rowData
 				File.open(contribFile,'a'){|f|
 					f.puts(rowData.join("\t"))
 				}
@@ -159,7 +171,7 @@ page.css("#form1 td a").each{|a|
 					cand_name,
 					elex_id,
 					elex_name,
-					elex_date_str,
+					# elex_date_str,
 					elex_ofc,
 					exp_date_str,
 					exp_name,
@@ -171,7 +183,7 @@ page.css("#form1 td a").each{|a|
 					exp_type,
 					exp_purpose
 				]
-				p rowData
+				# p rowData
 				File.open(expFile,'a'){|f|
 					f.puts(rowData.join("\t"))
 				}
