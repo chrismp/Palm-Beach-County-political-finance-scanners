@@ -91,6 +91,7 @@ cmte_list_pg.css('ul')[-1].css('li a').each{|a|
 					contrib_amt = contrib_td[4].text.gsub('$','').to_f # DATAPOINT!!					
 				rescue Exception => e
 					puts contrib_url+" GIVING US PROBLEMS"
+					puts contributor_arr,city_state_zip_arr
 					puts e,e.backtrace
 				end
 
