@@ -1,6 +1,7 @@
 [
 	'open-uri',
-	'nokogiri'
+	'nokogiri',
+	'open_uri_redirections'
 ].each{|g|
 	require g
 }
@@ -12,7 +13,7 @@ File.open(contribFile,'w'){|f|
 	headerArray = [
 		"Committee ID",
 		"Committee",
-		"Contribution date unformatted",
+		"Expense date",
 		"Contributor",
 		"Contributor address",
 		"Contributor city",
@@ -30,7 +31,7 @@ File.open(expFile,'w'){|f|
 	headerArray = [
 		"Committee ID",
 		"Committee",
-		"Expense date unformatted",
+		"Expense date",
 		"Expense name",
 		"Expense address",
 		"Expense city",
@@ -47,23 +48,23 @@ base_url = 'http://www.pbcelections.org/'
 cmte_list_url = 'CFCommittees.aspx'
 
 puts "OPENING "+base_url+cmte_list_url
-cmte_list_pg = Nokogiri::HTML(open(base_url+cmte_list_url))
+cmte_list_pg = Nokogiri::HTML(open(base_url+cmte_list_url, :allow_redirections => :safe))
 cmte_list_pg.css('ul')[-1].css('li a').each{|a|
 	cmte_id = a['href'].split('=')[-1]
 	cmte_name = a.text
 
 	puts "OPENING "+base_url+a["href"]
-	cmte_pg = Nokogiri::HTML(open(base_url+a['href']))
+	cmte_pg = Nokogiri::HTML(open(base_url+a['href'], :allow_redirections => :safe))
 	cmte_pg.css('table td a').each{|a2|
 		puts "OPENING "+base_url+a2["href"]
-		report_pg = Nokogiri::HTML(open(base_url+a2['href']))
+		report_pg = Nokogiri::HTML(open(base_url+a2['href'], :allow_redirections => :safe))
 		report_pg.css('#ReportsList a').each{|a3|
 			file_id = a3['href'].split('=')[1]
 			contrib_url = base_url+'/CFFilingDetail.aspx?type=contribution&file_id='+file_id
 			exp_url = base_url+'/CFFilingDetail.aspx?type=expenditure&file_id='+file_id
 
 			puts "OPENING " +contrib_url
-			contrib_page = Nokogiri::HTML(open(contrib_url))
+			contrib_page = Nokogiri::HTML(open(contrib_url, :allow_redirections => :safe))
 			contrib_page.css('#pnlContributions tr')[1..-1].each{|contrib_tr|
 				contrib_td = contrib_tr.css('td')
 				contrib_date_str = contrib_td[0].text # DATAPOINT!!
@@ -116,7 +117,7 @@ cmte_list_pg.css('ul')[-1].css('li a').each{|a|
 			} # DONE: contrib_page.css('#pnlContributions tr')[1..-1].each
 
 			puts "OPENING "+exp_url
-			exp_page = Nokogiri::HTML(open(exp_url))
+			exp_page = Nokogiri::HTML(open(exp_url, :allow_redirections => :safe))
 			exp_page.css("#pnlExpenditures tr")[1..-1].each{|exp_tr|
 				exp_td = exp_tr.css('td')
 				exp_date_str = exp_td[0].text # DATAPOINT!!

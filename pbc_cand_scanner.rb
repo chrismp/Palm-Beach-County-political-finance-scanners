@@ -1,6 +1,7 @@
 [
 	'open-uri',
-	'nokogiri'
+	'nokogiri',
+	'open_uri_redirections'
 ].each{|g|
 	require g
 }
@@ -14,9 +15,8 @@ File.open(contribFile,'w'){|f|
 		"Candidate name",
 		"Election ID",
 		"Election name",
-		"Election date unformatted",
 		"Office",
-		"Contribution date unformatted",
+		"Contribution date",
 		"Contributor",
 		"Contributor address",
 		"Contributor city",
@@ -36,9 +36,8 @@ File.open(expFile,'w'){|f|
 		"Candidate name",
 		"Election ID",
 		"Election name",
-		"Election date unformatted",
 		"Office",
-		"Expense date unformatted",
+		"Expense date",
 		"Expense name",
 		"Expense address",
 		"Expense city",
@@ -56,7 +55,7 @@ base_url = 'http://www.pbcelections.org/'
 cand_list_url = 'CFCandidates.aspx'
 
 puts "OPENING "+base_url+cand_list_url
-page = Nokogiri::HTML(open(base_url+cand_list_url))
+page = Nokogiri::HTML(open(base_url+cand_list_url, :allow_redirections => :safe))
 page.css("#form1 td a").each{|a| 
 	cand_url = base_url+a['href']
 
@@ -64,7 +63,7 @@ page.css("#form1 td a").each{|a|
 	cand_name = a.text # DATAPOINT!!
 
 	puts "OPENING "+cand_url
-	cand_page = Nokogiri::HTML(open(cand_url))
+	cand_page = Nokogiri::HTML(open(cand_url, :allow_redirections => :safe))
 	cand_page.css('#CFCandidateElections tr')[1..-1].each{|tr|
 		td = tr.css('td')
 		elex_id = td[1].css('a')[0]['href'].match(/elect_id\=.*?(?=\&)/).to_s.gsub('elect_id=','') # DATAPOINT!!
@@ -74,7 +73,7 @@ page.css("#form1 td a").each{|a|
 		fin_report_summary_url = base_url+td[1].css('a')[0]['href']
 
 		puts "OPENING "+fin_report_summary_url
-		fin_report_summary_page = Nokogiri::HTML(open(fin_report_summary_url))
+		fin_report_summary_page = Nokogiri::HTML(open(fin_report_summary_url, :allow_redirections => :safe))
 		fin_report_summary_page.css("#ReportsList a").each{|fin_detail_a| 
 			fin_detail_url = base_url+fin_detail_a['href']
 			file_id = fin_detail_url.split('=')[-1]
@@ -83,7 +82,7 @@ page.css("#form1 td a").each{|a|
 			exp_url = base_url+'/CFFilingDetail.aspx?type=expenditure&file_id='+file_id
 
 			puts "OPENING "+contrib_url
-			contrib_page = Nokogiri::HTML(open(contrib_url))
+			contrib_page = Nokogiri::HTML(open(contrib_url, :allow_redirections => :safe))
 			contrib_page.css('#pnlContributions tr')[1..-1].each{|contrib_tr|
 				contrib_td = contrib_tr.css('td')
 				contrib_date_str = contrib_td[0].text # DATAPOINT!!
@@ -142,7 +141,7 @@ page.css("#form1 td a").each{|a|
 				}
 			} # DONE: contrib_page.css('#pnlContributions tr')[1..-1].each
 
-			exp_page = Nokogiri::HTML(open(exp_url))
+			exp_page = Nokogiri::HTML(open(exp_url, :allow_redirections => :safe))
 			exp_page.css("#pnlExpenditures tr")[1..-1].each{|exp_tr|
 				exp_td = exp_tr.css('td')
 				exp_date_str = exp_td[0].text # DATAPOINT!!
